@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+#base {
+  position: relative;
+}
+
+#remote_video {
+  width: 100vw;
+  height: 100vh;
+  border: 1px solid black;
+  background-color: red;
+}
+
+#buttons {
+  background-color: #99cc00;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+#myVideo {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: #99cc00;
+  z-index: 3;
+}
