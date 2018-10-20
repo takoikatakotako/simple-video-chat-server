@@ -39,4 +39,8 @@ public func routes(_ router: Router) throws {
                 return rows[0].version
         }
     }
+    
+    router.get("conoha") { req in
+        return Room.query(on: req).range(..<50).all()
+    }
 }
