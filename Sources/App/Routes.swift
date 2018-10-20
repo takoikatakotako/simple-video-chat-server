@@ -40,7 +40,22 @@ public func routes(_ router: Router) throws {
         }
     }
     
+    router.get("test") { req in
+        return User2(
+            name: "Vapor User",
+            email: "user@vapor.codes"
+        )
+    }
+    
+    
     router.get("conoha") { req in
         return Room.query(on: req).range(..<50).all()
     }
+    
+    let helloController = HelloController()
+    router.get("greet", use: helloController.greet)
+    
+    // MARK: - room
+    let roomController: RoomController = RoomController()
+    router.post("api/v0/make", use: roomController.make)
 }

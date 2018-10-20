@@ -7,7 +7,7 @@ final class Room: MySQLModel {
     static let entity = "room"
     
     var room_id: Int?
-    var room_name: Date?
+    var room_name: String?
     var created_at: Date?
     var offer_sdp: String?
     var offer_id: String?
