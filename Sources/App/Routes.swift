@@ -58,4 +58,5 @@ public func routes(_ router: Router) throws {
     // MARK: - room
     let roomController: RoomController = RoomController()
     router.post("api/v0/make", use: roomController.make)
+    router.post("api/v0/make2", use: roomController.make2)
 }
