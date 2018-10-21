@@ -25,11 +25,11 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     
     // Configure a MySQL database
     let mysql = MySQLDatabase(config: MySQLDatabaseConfig(
-        hostname: "host.name.sample",
-        port: 3306,
-        username: "username",
-        password: "password",
-        database: "database"))
+        hostname: HOST_NAME,
+        port: PORT_NUMBER,
+        username: USER_NAME,
+        password: USER_PASSWORD,
+        database: DATABASE))
     
     /// Register the configured MySQL database to the database config.
     var databases = DatabasesConfig()
@@ -40,5 +40,4 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var migrations = MigrationConfig()
     migrations.add(model: Room.self, database: .mysql)
     services.register(migrations)
-
 }
