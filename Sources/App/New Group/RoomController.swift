@@ -34,15 +34,7 @@ final class RoomController {
         
         //let room = Room.query(on: req).filter(\.room_name == "onojun").all()
 
-        return try req.content.decode(Room.self).flatMap { dada -> User2 in
-            print(dada)
-            print(dada.room_name)
-            
-            return User2(
-                name: "Vapor User",
-                email: "user@vapor.codes"
-            )
-        }
+
 
         
         return User2(
