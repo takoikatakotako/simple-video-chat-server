@@ -26,7 +26,6 @@ final class RoomController {
             // 同じ名前のroomが作られているかチェックしたい。
             //
             return user.save(on: req).transform(to: .ok)
-
         }
     }
     
@@ -35,8 +34,19 @@ final class RoomController {
         
         //let room = Room.query(on: req).filter(\.room_name == "onojun").all()
 
+        return try req.content.decode(Room.self).flatMap { dada -> User2 in
+            print(dada)
+            print(dada.room_name)
+            
+            return User2(
+                name: "Vapor User",
+                email: "user@vapor.codes"
+            )
+        }
+
+        
         return User2(
-            name: "Vapor User",
+            name: "Vapeeeor User",
             email: "user@vapor.codes"
         )
         
