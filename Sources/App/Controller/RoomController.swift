@@ -32,9 +32,12 @@ final class RoomController {
     func make2(_ req: Request) throws -> User2 {
         // curl -H "Content-Type: application/json" -X POST -d '{"room_name":"zelda"}' http://localhost:8080/api/v0/make
         
-        //let room = Room.query(on: req).filter(\.room_name == "onojun").all()
-
-
+        let aaa = try req.content.decode(Room.self).map { user -> User2 in
+            return User2(
+                name: "Vapeeeor User",
+                email: "user@vapor.codes"
+            )
+        }
 
         
         return User2(
