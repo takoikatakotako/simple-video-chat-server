@@ -55,8 +55,11 @@ public func routes(_ router: Router) throws {
     let helloController = HelloController()
     router.get("greet", use: helloController.greet)
     
+
+    
     // MARK: - room
     let roomController: RoomController = RoomController()
     router.post("api/v0/make", use: roomController.make)
     router.post("api/v0/make2", use: roomController.make2)
+    router.post("make", use: roomController.makeRoom)
 }
