@@ -40,4 +40,58 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     var migrations = MigrationConfig()
     migrations.add(model: Room.self, database: .mysql)
     services.register(migrations)
+    
+    // WebSockets
+    // Create a new NIO websocket server
+    // wsta ws://localhost:3001
+    
+    let wss = NIOWebSocketServer.default()
+    // Add WebSocket upgrade support to GET /echo
+    wss.get("echo") { ws, req in
+        // Add a new on text callback
+        ws.onText { ws, text in
+            // Simply echo any received text
+            ws.send(text)
+        }
+    }
+    
+    wss.get("chat", String.parameter) { ws, req in
+        let name = try req.parameters.next(String.self)
+        ws.send("Welcome, \(name)!")
+        
+        // ...
+    }
+    
+    wss.get("socket") { ws, req in
+        print("----------")
+        print(ws)
+        print(type(of: ws))
+        print("----------")
+        ws.onText { ws_text, text in
+            // Simply echo any received text
+            print("@@@@@")
+            print(ws_text)
+            print(text)
+            
+            Room.query(on: req).all().map { data -> Void in
+                print("All Datas")
+                print(data)
+                for room: Room in data {
+                    print(room)
+                }
+            }
+            let personalData: Data =  text.data(using: String.Encoding.utf8)!
+            do {
+                // パースする
+                let items = try JSONSerialization.jsonObject(with: personalData) as! Dictionary<String, Any>
+                print(items["type"] as! String) // メンバname Stringにキャスト
+                // print(items["sdp"] as! String)
+            } catch {
+                print(error)
+            }
+            print("@@@@@")
+        }
+    }
+     services.register(wss, as: WebSocketServer.self)
+    
 }

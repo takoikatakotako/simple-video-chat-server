@@ -47,20 +47,10 @@ final class RoomController {
     }
 
     // OK
-    func makeRoom(_ req: Request) throws -> Future<Result> {
-        return try req.content.decode(Room.self).map { newRoom -> Result in
-            print(newRoom.room_name!) //zelda
-            return Result(
-                message: "message"
-            )
-        }
-    }
-
     // curl -H "Content-Type: application/json" -X POST -d '{"room_name":"zelda"}' http://localhost:8080/make
-    func makeRoom2(_ req: Request) throws -> Future<Result> {
+    func makeRoom(_ req: Request) throws -> Future<Result> {
         return try req.content.decode(Room.self).flatMap { newRoom -> Future<Result> in
-            print(newRoom.room_name!) //zelda
-            if newRoom.room_name!.characters.count > 4 {
+            if newRoom.room_name!.count > 4 {
                 return Room.query(on: req).all().map { rooms -> Result in
                     return Result(
                         message: "message"
@@ -69,6 +59,33 @@ final class RoomController {
             } else {
                 return req.future(Result(message: "message"))
             }
+        }
+    }
+    
+    
+
+    // curl -H "Content-Type: application/json" -X POST -d '{"room_name":"zelda"}' http://localhost:8080/make
+    func makeRoom2(_ req: Request) throws -> Future<Result> {
+        return try req.content.decode(Room.self).flatMap { newRoom -> Future<Result> in
+            print(newRoom.room_name!) //zelda
+            if newRoom.room_name!.count > 4 {
+                return Room.query(on: req).all().map { rooms -> Result in
+                    return Result(
+                        message: "message"
+                    )
+                }
+            } else {
+                return req.future(Result(message: "message"))
+            }
+        }
+    }
+    
+    func makeRoom3(_ req: Request) throws -> Future<Result> {
+        return try req.content.decode(Room.self).map { newRoom -> Result in
+            print(newRoom.room_name!) //zelda
+            return Result(
+                message: "message"
+            )
         }
     }
 }
