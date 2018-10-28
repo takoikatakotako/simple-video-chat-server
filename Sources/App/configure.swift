@@ -3,6 +3,8 @@ import Leaf
 import MySQL
 import FluentMySQL
 
+var websocketClients: [WebSocket] = []
+
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
     /// Register providers first
@@ -60,6 +62,21 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
         ws.send("Welcome, \(name)!")
         
         // ...
+    }
+    
+    wss.get("socket2") { ws, req in
+        websocketClients.append(ws)
+        ws.onText { ws, text in
+            for client in websocketClients {
+                if !client.isClosed {
+                    if ws === client {
+                        print("slip sender")
+                    } else {
+                        client.send(text)
+                    }
+                }
+            }
+        }
     }
     
     wss.get("socket") { ws, req in
