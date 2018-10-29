@@ -64,6 +64,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
         // ...
     }
     
+    var websocketClients: [WebSocket] = []
     wss.get("socket2") { ws, req in
         websocketClients.append(ws)
         ws.onText { ws, text in
