@@ -8,131 +8,73 @@ let negotiationneededCounter = 0;
 let isOffer = false;
 
 
-window.onload = function() {
-    //alert("ページが読み込まれました！");
+//const wsUrl = 'ws://localhost:3001/';
+const wsUrl = 'ws://localhost:8080/socket';
+const ws = new WebSocket(wsUrl);
+ws.onopen = (evt) => {
+    console.log('ws open()');
+};
+ws.onerror = (err) => {
+    console.error('ws onerror() ERR:', err);
+};
+ws.onmessage = (evt) => {
+    console.log('ws onmessage() data:', evt.data);
+    const message = JSON.parse(evt.data);
+    console.log('@@@@@@@@@@@@');
+    console.log(message);
+    console.log('@@@@@@@@@@@@');
+    switch(message.type){
+        case 'offer': {
+            console.log('Received offer ...');
+            textToReceiveSdp.value = message.sdp;
+            setOffer(message);
+            break;
+        }
+        case 'answer': {
+            console.log('Received answer ...');
+            textToReceiveSdp.value = message.sdp;
+            setAnswer(message);
+            break;
+        }
+        case 'candidate': {
+            console.log('Received ICE candidate ...');
+            const candidate = new RTCIceCandidate(message.ice);
+            console.log(candidate);
+            addIceCandidate(candidate);
+            break;
+        }
+        default: {
+            console.log("Invalid message");
+            break;
+         }
+    }
 };
 
-// apiのファイルの階層を取得
-let apiUrl = location.href;
-console.log(apiUrl.substr(0, apiUrl.lastIndexOf( '/' ) + 1));
-apiUrl = apiUrl.substr(0, apiUrl.lastIndexOf( '/' ) + 1);
-
-// getで送れるようにSDP中のスペースとタブを変換
-function convertSdpString(str) {
-  return str.replace(/ /g, '<SPACE>').replace(/\r?\n/g, '<BR>');
-}
-
-// getで送れるようにSDP中のスペースとタブを変換
-function unconvertSdpString(str) {
-  return str.replace(/<SPACE>/g, ' ').replace(/<BR>/g, '\n');
-}
-
-// setOfferボタンが押されたら
-function setOfferSDP() {
-  var offerSdp = convertSdpString(textForSendSdp.value);
-  $.ajax({
-    url: apiUrl + 'set-offer.php',
-    type: 'POST',
-    data : {
-      name : "onojun",
-      offer_sdp : offerSdp
-    },
-    success: function(data){
-        let json = JSON.parse(data);
-        console.log(json);
-        if (json['is_success']) {
-          console.log('seted offer sdp.')
-        } else {
-          console.log('error');
-        }
-    },
-    error: function(data) {
-      console.log('set offer failed.')
-      console.log(data);
-      alert(data);
+// ICE candaidate受信時にセットする
+function addIceCandidate(candidate) {
+    if (peerConnection) {
+        peerConnection.addIceCandidate(candidate);
     }
-  });
-}
-
-// readOfferボタンが押されたら
-function readOfferSDP() {
-  $.ajax({
-    url: apiUrl + 'read-offer.php?name=onojun',
-    type: 'GET',
-    success: function(data){
-        let json = JSON.parse(data);
-        console.log(json);
-        if (json['is_success']) {
-          // textareaに表示
-          textToReceiveSdp.value = unconvertSdpString(json['offer_sdp']);
-          console.log('read offer sdp.')
-        } else {
-          console.log('error');
-        }
-    },
-    error: function(data) {
-      console.log('read offer sdp failed.')
-      alert(data);
+    else {
+        console.error('PeerConnection not exist!');
+        return;
     }
-  });
 }
 
-// setAnswerボタンが押されたら
-function setAnswerSDP() {
-  var answerSDP = convertSdpString(textForSendSdp.value);
-  $.ajax({
-    url: apiUrl + 'set-answer.php',
-    type: 'POST',
-    data : {
-      name : "onojun",
-      answer_sdp : answerSDP
-    },
-    success: function(data){
-        let json = JSON.parse(data);
-        console.log(json);
-        if (json['is_success']) {
-          console.log('seted answer sdp.')
-        } else {
-          console.log('error');
-        }
-    },
-    error: function(data) {
-      console.log('read answer sdp failed.')
-      alert(data);
-    }
-  });
-
+// ICE candidate生成時に送信する
+function sendIceCandidate(candidate) {
+    console.log('---sending ICE candidate ---');
+    const message = JSON.stringify({ type: 'candidate', ice: candidate });
+    console.log('sending candidate=' + message);
+    ws.send(message);
 }
 
-// readAnswerボタンが押されたら
-function readAnswerSDP() {
-  $.ajax({
-    url: apiUrl + 'read-answer.php?name=onojun',
-    type: 'GET',
-    success: function(data){
-        let json = JSON.parse(data);
-        console.log(json);
-        if (json['is_success']) {
-          // textareaに表示
-          textToReceiveSdp.value = unconvertSdpString(json['answer_sdp']);
-          console.log('read answer sdp.')
-        } else {
-          console.log('error');
-        }
-    },
-    error: function(data) {
-      console.log('read answer sdp failed.')
-      alert(data);
-    }
-  });
-}
 
 // getUserMediaでカメラ、マイクにアクセス
 async function startVideo() {
     try{
-        localStream = await navigator.mediaDevices.getUserMedia({video: true, audio: true});
+        localStream = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
         playVideo(localVideo,localStream);
-        //alert('aaaa');
     } catch(err){
         console.error('mediaDevice.getUserMedia() error:', err);
     }
@@ -142,10 +84,6 @@ async function startVideo() {
 async function playVideo(element, stream) {
     element.srcObject = stream;
     await element.play();
-    console.log('played');
-    sleep(3000);
-    // 5秒後にメッセージを表示
-    console.log('5秒経過しました！');
 }
 
 
@@ -162,12 +100,13 @@ function prepareNewConnection(isOffer) {
 
     // ICE Candidateを収集したときのイベント
     peer.onicecandidate = evt => {
-        if (evt.candidate) {
-            console.log(evt.candidate);
-        } else {
-            console.log('empty ice event');
-            sendSdp(peer.localDescription);
-        }
+      if (evt.candidate) {
+          console.log(evt.candidate);
+          sendIceCandidate(evt.candidate);
+      } else {
+          console.log('empty ice event');
+          // sendSdp(peer.localDescription);
+      }
     };
 
     // Offer側でネゴシエーションが必要になったときの処理
@@ -186,7 +125,7 @@ function prepareNewConnection(isOffer) {
         } catch(err){
             console.error('setLocalDescription(offer) ERROR: ', err);
         }
-    };
+    }
 
     // ローカルのMediaStreamを利用できるようにする
     if (localStream) {
@@ -203,8 +142,13 @@ function prepareNewConnection(isOffer) {
 function sendSdp(sessionDescription) {
     console.log('---sending sdp ---');
     textForSendSdp.value = sessionDescription.sdp;
-    textForSendSdp.focus();
-    textForSendSdp.select();
+    /*---
+     textForSendSdp.focus();
+     textForSendSdp.select();
+     ----*/
+    const message = JSON.stringify(sessionDescription);
+    console.log('sending SDP=' + message);
+    ws.send(message);
 }
 
 // Connectボタンが押されたらWebRTCのOffer処理を開始
@@ -285,4 +229,23 @@ async function setAnswer(sessionDescription) {
     } catch(err){
         console.error('setRemoteDescription(answer) ERROR: ', err);
     }
+}
+
+// P2P通信を切断する
+function hangUp(){
+    if (peerConnection) {
+        if(peerConnection.iceConnectionState !== 'closed'){
+            peerConnection.close();
+            peerConnection = null;
+            negotiationneededCounter = 0;
+            const message = JSON.stringify({ type: 'close' });
+            console.log('sending close message');
+            ws.send(message);
+            cleanupVideoElement(remoteVideo);
+            textForSendSdp.value = '';
+            textToReceiveSdp.value = '';
+            return;
+        }
+    }
+    console.log('peerConnection is closed.');
 }
