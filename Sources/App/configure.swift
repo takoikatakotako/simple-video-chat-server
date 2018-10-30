@@ -24,21 +24,19 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
 
     // WebSockets
     let wss = NIOWebSocketServer.default()
-    
     wss.get("socket", String.parameter) { ws, req in
-        
-        print("@@@@@@@");
-        let str = try req.parameters.next(String.self)
-        print(str)
-        print("@@@@@@@");
-
-        // closeしたのは消したい
-        if websocketClients[str] == nil {
-            websocketClients[str] = []
+        let room = try req.parameters.next(String.self)
+        // roomがなければ初期化、既にある場合はcloseを削除
+        if websocketClients[room] == nil {
+            websocketClients[room] = []
+        } else {
+            websocketClients[room] = websocketClients[room]!.filter({
+                !$0.isClosed
+            })
         }
-        websocketClients[str]!.append(ws)
+        websocketClients[room]!.append(ws)
         ws.onText { ws, text in
-            for client in websocketClients[str]! {
+            for client in websocketClients[room]! {
                 if !client.isClosed {
                     if ws === client {
                         print("slip sender")
