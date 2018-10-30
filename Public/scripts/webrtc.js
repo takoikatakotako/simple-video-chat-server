@@ -7,9 +7,11 @@ let peerConnection = null;
 let negotiationneededCounter = 0;
 let isOffer = false;
 
-
 //const wsUrl = 'ws://localhost:3001/';
-const wsUrl = 'ws://localhost:8080/socket';
+const uri = location.href;
+const room = uri.substr(uri.lastIndexOf( '/' ) + 1, uri.length);
+const wsUrl = 'ws://' + location.host + '/socket/' + room;
+
 const ws = new WebSocket(wsUrl);
 ws.onopen = (evt) => {
     console.log('ws open()');
@@ -64,11 +66,10 @@ function addIceCandidate(candidate) {
 // ICE candidate生成時に送信する
 function sendIceCandidate(candidate) {
     console.log('---sending ICE candidate ---');
-    const message = JSON.stringify({ type: 'candidate', ice: candidate });
+    const message = JSON.stringify({ type: 'candidate', ice: candidate, room:room });
     console.log('sending candidate=' + message);
     ws.send(message);
 }
-
 
 // getUserMediaでカメラ、マイクにアクセス
 async function startVideo() {
@@ -142,12 +143,9 @@ function prepareNewConnection(isOffer) {
 function sendSdp(sessionDescription) {
     console.log('---sending sdp ---');
     textForSendSdp.value = sessionDescription.sdp;
-    /*---
-     textForSendSdp.focus();
-     textForSendSdp.select();
-     ----*/
+    sessionDescription.room = room;
+
     const message = JSON.stringify(sessionDescription);
-    console.log('sending SDP=' + message);
     ws.send(message);
 }
 
@@ -238,7 +236,7 @@ function hangUp(){
             peerConnection.close();
             peerConnection = null;
             negotiationneededCounter = 0;
-            const message = JSON.stringify({ type: 'close' });
+            const message = JSON.stringify({ type: 'close', room: room });
             console.log('sending close message');
             ws.send(message);
             cleanupVideoElement(remoteVideo);

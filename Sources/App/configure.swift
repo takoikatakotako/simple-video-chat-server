@@ -1,7 +1,7 @@
 import Vapor
 import Leaf
 
-var websocketClients: [WebSocket] = []
+var websocketClients: Dictionary<String, [WebSocket]> = [:]
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
@@ -24,11 +24,21 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
 
     // WebSockets
     let wss = NIOWebSocketServer.default()
-    wss.get("socket") { ws, req in
+    
+    wss.get("socket", String.parameter) { ws, req in
+        
+        print("@@@@@@@");
+        let str = try req.parameters.next(String.self)
+        print(str)
+        print("@@@@@@@");
+
         // closeしたのは消したい
-        websocketClients.append(ws)
+        if websocketClients[str] == nil {
+            websocketClients[str] = []
+        }
+        websocketClients[str]!.append(ws)
         ws.onText { ws, text in
-            for client in websocketClients {
+            for client in websocketClients[str]! {
                 if !client.isClosed {
                     if ws === client {
                         print("slip sender")
