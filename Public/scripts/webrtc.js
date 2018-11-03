@@ -10,7 +10,9 @@ let isOffer = false;
 //const wsUrl = 'ws://localhost:3001/';
 const uri = location.href;
 const room = uri.substr(uri.lastIndexOf( '/' ) + 1, uri.length);
-const wsUrl = 'ws://' + location.host + '/socket/' + room;
+// const wsUrl = 'ws://' + location.host + '/socket/' + room;
+const wsUrl =  ((location.protocol == 'https:') ? 'wss' : 'ws') + '://' + location.host + '/socket/' + room;
+console.log(wsUrl);
 
 const ws = new WebSocket(wsUrl);
 ws.onopen = (evt) => {
