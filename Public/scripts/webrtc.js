@@ -1,5 +1,5 @@
-const localVideo = document.getElementById('local_video');
-const remoteVideo = document.getElementById('remote_video');
+const localVideo = document.getElementById('localVideo');
+const remoteVideo = document.getElementById('remoteVideo');
 
 let localStream = null;
 let peerConnection = null;
@@ -12,8 +12,12 @@ const room = uri.substr(uri.lastIndexOf( '/' ) + 1, uri.length);
 // const wsUrl = 'ws://' + location.host + '/socket/' + room;
 const wsUrl =  ((location.protocol == 'https:') ? 'wss' : 'ws') + '://' + location.host + '/socket/' + room;
 console.log(wsUrl);
-
 const ws = new WebSocket(wsUrl);
+
+window.onload = function() {
+    startVideo();
+}
+
 ws.onopen = (evt) => {
     console.log('ws open()');
 };
@@ -23,9 +27,6 @@ ws.onerror = (err) => {
 ws.onmessage = (evt) => {
     console.log('ws onmessage() data:', evt.data);
     const message = JSON.parse(evt.data);
-    console.log('@@@@@@@@@@@@');
-    console.log(message);
-    console.log('@@@@@@@@@@@@');
     switch(message.type){
         case 'offer': {
             console.log('Received offer ...');
@@ -105,7 +106,6 @@ function prepareNewConnection(isOffer) {
           sendIceCandidate(evt.candidate);
       } else {
           console.log('empty ice event');
-          // sendSdp(peer.localDescription);
       }
     };
 

@@ -7,18 +7,13 @@
 </head>
 
 <body>
-<div id="base">
-  <video id="remote_video" autoplay></video>
-  <div id="buttons">
-      <button type="button" onclick="startVideo();">Start Video</button>
-      <button type="button" onclick="stopVideo();">Stop Video</button>
-      &nbsp;
-      <button type="button" onclick="connect();">Connect</button>
-      <button type="button" onclick="hangUp();">Hang Up</button>
+<div class="base">
+  <video id="remoteVideo" autoplay></video>
+  <div class="buttons">
+      <button class="button" type="image" src="button.gif" onclick="connect();">Connect</button>
+      <button class="button" type="image" src="button.gif" onclick="hangUp();">Hang Up</button>
   </div>
-  <div id="myVideo">
-      <video id="local_video" autoplay></video>
-  </div>
+  <video id="localVideo" autoplay></video>
 </div>
 <script type='text/javascript' src='/scripts/webrtc.js'></script>
 </body>
