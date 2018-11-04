@@ -1,6 +1,5 @@
 const localVideo = document.getElementById('local_video');
 const remoteVideo = document.getElementById('remote_video');
-const textForSendSdp = document.getElementById('text_for_send_sdp');
 const textToReceiveSdp = document.getElementById('text_for_receive_sdp');
 let localStream = null;
 let peerConnection = null;
@@ -144,7 +143,7 @@ function prepareNewConnection(isOffer) {
 // 手動シグナリングのための処理を追加する
 function sendSdp(sessionDescription) {
     console.log('---sending sdp ---');
-    textForSendSdp.value = sessionDescription.sdp;
+    // textForSendSdp.value = sessionDescription.sdp;
     sessionDescription.room = room;
 
     const message = JSON.stringify(sessionDescription);
@@ -220,7 +219,7 @@ function hangUp(){
             console.log('sending close message');
             ws.send(message);
             cleanupVideoElement(remoteVideo);
-            textForSendSdp.value = '';
+            // textForSendSdp.value = '';
             textToReceiveSdp.value = '';
             return;
         }

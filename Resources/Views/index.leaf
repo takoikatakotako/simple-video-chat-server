@@ -15,17 +15,9 @@
       &nbsp;
       <button type="button" onclick="connect();">Connect</button>
       <button type="button" onclick="hangUp();">Hang Up</button>
-      &nbsp;
-      <button type="button" onclick="setOfferSDP();">Set Offer</button>
-      <button type="button" onclick="readOfferSDP();">Read Offer</button>
-      <button type="button" onclick="setAnswerSDP();">Set Answer</button>
-      <button type="button" onclick="readAnswerSDP();">Read Answer</button>
   </div>
   <div id="myVideo">
-      <video id="local_video" autoplay style="width: 160px; height: 120px; border: 1px solid black;"></video>
-      <p>SDP to send:<br/>
-          <textarea id="text_for_send_sdp" rows="5" cols="60" readonly="readonly">SDP to send</textarea>
-      </p>
+      <video id="local_video" autoplay style="width: 160px; height: 120px;"></video>
       <p>SDP to receive:&nbsp;
           <textarea id="text_for_receive_sdp" rows="5" cols="60"></textarea>
       </p>
