@@ -180,28 +180,6 @@ async function makeAnswer() {
     }
 }
 
-// Receive remote SDPボタンが押されたらOffer側とAnswer側で処理を分岐
-function onSdpText() {
-    const text = textToReceiveSdp.value;
-    if (peerConnection) {
-        console.log('Received answer text...');
-        const answer = new RTCSessionDescription({
-            type : 'answer',
-            sdp : text,
-        });
-        setAnswer(answer);
-    }
-    else {
-        console.log('Received offer text...');
-        const offer = new RTCSessionDescription({
-            type : 'offer',
-            sdp : text,
-        });
-        setOffer(offer);
-    }
-    textToReceiveSdp.value ='';
-}
-
 // Offer側のSDPをセットする処理
 async function setOffer(sessionDescription) {
     if (peerConnection) {

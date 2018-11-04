@@ -8,11 +8,8 @@
 
 <body>
 <div id="base">
-  <div id="Wrapper">
-    <video id="remote_video" autoplay></video>
-  </div>
+  <video id="remote_video" autoplay></video>
   <div id="buttons">
-      Onojun-Web-RTC<br/>
       <button type="button" onclick="startVideo();">Start Video</button>
       <button type="button" onclick="stopVideo();">Stop Video</button>
       &nbsp;
@@ -30,8 +27,6 @@
           <textarea id="text_for_send_sdp" rows="5" cols="60" readonly="readonly">SDP to send</textarea>
       </p>
       <p>SDP to receive:&nbsp;
-          <button type="button" onclick="onSdpText();">Receive remote SDP</button>
-          <br/>
           <textarea id="text_for_receive_sdp" rows="5" cols="60"></textarea>
       </p>
   </div>
