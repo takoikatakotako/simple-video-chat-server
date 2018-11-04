@@ -1,6 +1,6 @@
 const localVideo = document.getElementById('local_video');
 const remoteVideo = document.getElementById('remote_video');
-const textToReceiveSdp = document.getElementById('text_for_receive_sdp');
+
 let localStream = null;
 let peerConnection = null;
 let negotiationneededCounter = 0;
@@ -29,13 +29,11 @@ ws.onmessage = (evt) => {
     switch(message.type){
         case 'offer': {
             console.log('Received offer ...');
-            textToReceiveSdp.value = message.sdp;
             setOffer(message);
             break;
         }
         case 'answer': {
             console.log('Received answer ...');
-            textToReceiveSdp.value = message.sdp;
             setAnswer(message);
             break;
         }
@@ -219,8 +217,6 @@ function hangUp(){
             console.log('sending close message');
             ws.send(message);
             cleanupVideoElement(remoteVideo);
-            // textForSendSdp.value = '';
-            textToReceiveSdp.value = '';
             return;
         }
     }

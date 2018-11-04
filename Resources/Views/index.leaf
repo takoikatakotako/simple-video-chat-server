@@ -17,10 +17,7 @@
       <button type="button" onclick="hangUp();">Hang Up</button>
   </div>
   <div id="myVideo">
-      <video id="local_video" autoplay style="width: 160px; height: 120px;"></video>
-      <p>SDP to receive:&nbsp;
-          <textarea id="text_for_receive_sdp" rows="5" cols="60"></textarea>
-      </p>
+      <video id="local_video" autoplay></video>
   </div>
 </div>
 <script type='text/javascript' src='/scripts/webrtc.js'></script>
