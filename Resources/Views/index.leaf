@@ -13,7 +13,7 @@
       <button class="button" type="button" onclick="connect();"><img src="/images/call.svg"></button>
       <button class="button" type="button" onclick="hangUp();"><img src="/images/call_end.svg"></button>
   </div>
-  <video id="localVideo" autoplay></video>
+  <video id="localVideo" autoplay muted></video>
 </div>
 <script type='text/javascript' src='/scripts/webrtc.js'></script>
 </body>

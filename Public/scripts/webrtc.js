@@ -6,10 +6,8 @@ let peerConnection = null;
 let negotiationneededCounter = 0;
 let isOffer = false;
 
-//const wsUrl = 'ws://localhost:3001/';
 const uri = location.href;
 const room = uri.substr(uri.lastIndexOf( '/' ) + 1, uri.length);
-// const wsUrl = 'ws://' + location.host + '/socket/' + room;
 const wsUrl =  ((location.protocol == 'https:') ? 'wss' : 'ws') + '://' + location.host + '/socket/' + room;
 console.log(wsUrl);
 const ws = new WebSocket(wsUrl);
@@ -134,14 +132,12 @@ function prepareNewConnection(isOffer) {
     } else {
         console.warn('no local stream, but continue.');
     }
-
     return peer;
 }
 
 // 手動シグナリングのための処理を追加する
 function sendSdp(sessionDescription) {
     console.log('---sending sdp ---');
-    // textForSendSdp.value = sessionDescription.sdp;
     sessionDescription.room = room;
 
     const message = JSON.stringify(sessionDescription);
