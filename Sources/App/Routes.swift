@@ -7,11 +7,10 @@ public func routes(_ router: Router) throws {
         return try req.view().render("welcome")
     }
  
-    // romm
+    // room
     router.get("/", String.parameter) { req -> Future<View> in
-        let str = try req.parameters.next(String.self)
-        print(str)
-        if str.count < 4 {
+        let room = try req.parameters.next(String.self)
+        if room.count < 4 {
             return try req.view().render("welcome")
         }
         return try req.view().render("index")
