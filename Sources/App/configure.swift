@@ -1,7 +1,7 @@
 import Vapor
 import Leaf
 
-var websocketClients: Dictionary<String, [WebSocket]> = [:]
+var websocketClients: [String: [WebSocket]] = [:]
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
@@ -37,13 +37,14 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
         websocketClients[room]!.append(ws)
         ws.onText { ws, text in
             for client in websocketClients[room]! {
-                if !client.isClosed {
-                    if ws === client {
-                        print("slip sender")
-                    } else {
-                        // かつ、roomが一緒
-                        client.send(text)
-                    }
+                if client.isClosed {
+                    return
+                }
+                if ws === client {
+                    print("slip sender")
+                } else {
+                    // roomが一緒
+                    client.send(text)
                 }
             }
         }
