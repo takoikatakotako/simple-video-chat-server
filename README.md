@@ -18,3 +18,19 @@
         <img src="http://img.shields.io/badge/swift-4.1-brightgreen.svg" alt="Swift 4.1">
     </a>
 </p>
+
+
+## setup
+
+
+## docker run
+$ docker run -d -p 80:80 kabigon/simple-video-chat:latest
+
+## docker push (for me)
+### latest
+$ docker build -f ./Dockerfile/Dockerfile --tag=kabigon/simple-video-chat .
+$ docker push kabigon/simple-video-chat
+
+### without-nginx
+$ docker build -f ./Dockerfile/Dockerfile:without-nginx --tag=kabigon/simple-video-chat:without-nginx .
+$ docker push kabigon/simple-video-chat:without-nginx
