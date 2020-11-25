@@ -5,7 +5,7 @@ func routes(_ app: Application) throws {
         return req.view.render("welcome")
     }
 
-    app.get("/", ":room") { req -> EventLoopFuture<View> in
+    app.get(":room") { req -> EventLoopFuture<View> in
         guard let room = req.parameters.get("room") else {
             return req.view.render("welcome")
         }
