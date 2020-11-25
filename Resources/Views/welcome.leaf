@@ -1,9 +1,12 @@
-#set("title") { It works }
-
-#set("body") {
-	<div class="welcome">
-		<img src="/images/it-works.png">
-	</div>
-}
-
-#embed("base")
+<!DOCTYPE html>
+<html>
+<head>
+    <title>It works</title>
+    <link rel="stylesheet" href="/styles/app.css">
+</head>
+<body>
+    <div class="welcome">
+        <img src="/images/it-works.png">
+    </div>
+</body>
+</html>
